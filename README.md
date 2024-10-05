@@ -83,10 +83,10 @@ To achieve these aims, developers perform the following activities:
 
 Reference: [Scrum Alliance Code of Ethics](https://www.scrumalliance.org/code-of-ethics) | [The Scrum Values](https://www.scrum.org/resources/scrum-values) | [Creating a Team Working Agreement](https://www.scrum.org/resources/creating-team-working-agreement)
 ## 1. General Principles
-**Respect and Inclusivity:** Every team member’s opinion matters. We treat each other with respect, inclusivity, and openness to diverse perspectives.
-Collaboration and Transparency: We work together as a team and share knowledge freely. We foster a culture of transparency, keeping everyone informed and aligned.
-Focus on the Customer: Our primary goal is delivering value to the customer, and we work with that focus in mind.
-Continuous Improvement: We embrace opportunities to learn, adapt, and improve through feedback and reflection.
+* **Respect and Inclusivity:** Every team member’s opinion matters. We treat each other with respect, inclusivity, and openness to diverse perspectives.
+* **Collaboration and Transparency:** We work together as a team and share knowledge freely. We foster a culture of transparency, keeping everyone informed and aligned.
+* **Focus on the Customer:** Our primary goal is delivering value to the customer, and we work with that focus in mind.
+* **Continuous Improvement:** We embrace opportunities to learn, adapt, and improve through feedback and reflection.
 
 ## 2. Roles and Responsibilities
 ### Product Owner
@@ -105,36 +105,36 @@ Continuous Improvement: We embrace opportunities to learn, adapt, and improve th
 * **Commitment to Sprint Goals:** Developers commit to the sprint goals and support each other in achieving them through collaboration and shared responsibility.
 
 ## 3. Meeting Etiquette
-**Timeliness:** All team members will join meetings on time, prepared and focused on the agenda.
-**Participation:** Everyone is encouraged to contribute and actively engage in discussions. Listening is as important as speaking.
-**Stay on Topic:** Meetings, especially the Daily Standups, are focused on what’s necessary for the sprint. Conversations that go off-track should be scheduled outside of the meeting.
-**No Blame Culture:** Mistakes are treated as learning opportunities. We focus on solving problems, not assigning blame.
+* **Timeliness:** All team members will join meetings on time, prepared and focused on the agenda.
+* **Participation:** Everyone is encouraged to contribute and actively engage in discussions. Listening is as important as speaking.
+* **Stay on Topic:** Meetings, especially the Daily Standups, are focused on what’s necessary for the sprint. Conversations that go off-track should be scheduled outside of the meeting.
+* **No Blame Culture:** Mistakes are treated as learning opportunities. We focus on solving problems, not assigning blame.
 
 ## 4. Feedback and Retrospectives
-**Constructive Feedback:** Feedback is given in a constructive and respectful manner, aimed at improving the team’s performance and product quality.
-**Continuous Improvement:** Retrospectives are a key opportunity to reflect on how we can improve. The team will make incremental adjustments to enhance their processes.
+* **Constructive Feedback:** Feedback is given in a constructive and respectful manner, aimed at improving the team’s performance and product quality.
+* **Continuous Improvement:** Retrospectives are a key opportunity to reflect on how we can improve. The team will make incremental adjustments to enhance their processes.
 
 ## 5. Work Practices and Tools
-**Definition of Done:** The team agrees on and adheres to a clear Definition of Done for every increment to ensure quality and completeness.
-**Collaboration Tools:** We use collaboration tools (e.g., Jira, Slack, etc.) effectively to track progress, share information, and communicate.
-**Work-Life Balance:** We respect each other’s work-life balance, ensuring that workloads are manageable and that team members have time to recharge.
+* **Definition of Done:** The team agrees on and adheres to a clear Definition of Done for every increment to ensure quality and completeness.
+* **Collaboration Tools:** We use collaboration tools (e.g., Jira, Slack, etc.) effectively to track progress, share information, and communicate.
+* **Work-Life Balance:** We respect each other’s work-life balance, ensuring that workloads are manageable and that team members have time to recharge.
 
 ## 6. Conflict Resolution
-**Address Conflicts Promptly:** Conflicts should be addressed as soon as they arise, directly with the person involved if possible.
-**Seek Mediation if Needed:** If conflicts cannot be resolved within the team, the Scrum Master will act as a mediator to facilitate resolution.
-**Respectful Disagreement:** Disagreements are normal, but they should be expressed respectfully and in a way that fosters discussion and resolution.
+* **Address Conflicts Promptly:** Conflicts should be addressed as soon as they arise, directly with the person involved if possible.
+* **Seek Mediation if Needed:** If conflicts cannot be resolved within the team, the Scrum Master will act as a mediator to facilitate resolution.
+* **Respectful Disagreement:** Disagreements are normal, but they should be expressed respectfully and in a way that fosters discussion and resolution.
 
 ## 7. Accountability
-**Responsibility for Actions:** All team members are accountable for their own actions and contributions to the team’s goals.
-**Commitment to Sprint Goals:** Once a sprint goal is agreed upon, every member commits to achieving it. We support one another and take shared ownership of the outcomes.
+* **Responsibility for Actions:** All team members are accountable for their own actions and contributions to the team’s goals.
+* **Commitment to Sprint Goals:** Once a sprint goal is agreed upon, every member commits to achieving it. We support one another and take shared ownership of the outcomes.
 
 ## 8. Diversity and Inclusion
-**Promote Diversity:** We value diverse backgrounds, experiences, and perspectives. All team members are encouraged to bring their unique insights to the table.
-**Create a Safe Environment:** We work to ensure that everyone feels safe to share their thoughts, ideas, and feedback without fear of judgment or discrimination.
+* **Promote Diversity:** We value diverse backgrounds, experiences, and perspectives. All team members are encouraged to bring their unique insights to the table.
+* **Create a Safe Environment:** We work to ensure that everyone feels safe to share their thoughts, ideas, and feedback without fear of judgment or discrimination.
 
 ## 9. Confidentiality and Security
-**Protect Confidential Information:** We maintain the confidentiality of sensitive project information and follow security protocols.
-**Data Security:** We follow best practices for security and privacy, especially in handling sensitive customer or product data.
+* **Protect Confidential Information:** We maintain the confidentiality of sensitive project information and follow security protocols.
+* **Data Security:** We follow best practices for security and privacy, especially in handling sensitive customer or product data.
 
 ## 
 ***By working together as a team, we shall commit to upholding this Code of Conduct, fostering a productive, respectful, and collaborative environment to achieve our goals.***
