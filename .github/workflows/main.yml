@@ -1,9 +1,9 @@
-name: A workflow for Group 5's Assessment Project
+name: A workflow for Group 5's Project
 on: push
 
 jobs:
   build:
-    name: Grp5Assessment
+    name: Group 5's Project Action
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
