@@ -1,4 +1,4 @@
 FROM openjdk:latest
-COPY ./target/classes/Grp5Assessment /tmp/Grp5Assessment
+COPY ./target/seMethods-0.1.0.1-jar-with-dependencies.jar /tmp
 WORKDIR /tmp
-ENTRYPOINT ["java", "Grp5Assessment.App"]
+ENTRYPOINT ["java", "-jar", "seMethods-0.1.0.1-jar-with-dependencies.jar"]
