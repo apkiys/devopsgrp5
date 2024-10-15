@@ -1,5 +1,12 @@
 # SET09803 2024-5 TR1 001 DevOps Global Online Module for Group 5
 
+![Static Badge](https://img.shields.io/badge/Group%205's%20Project-passing-brightgreen?logo=github)
+
+* Master Build Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=master)
+* Develop Branch Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=develop)
+* License [![LICENSE](https://img.shields.io/github/license/apkiys/devopsgrp5)](https://github.com/apkiys/devopsgrp5/blob/master/LICENSE)
+* Release [![Releases](https://img.shields.io/github/release/apkiys/devopsgrp5/all.svg?style=flat-square)](https://github.com/apkiys/devopsgrp5/releases)
+
 Reference: [The Scrum Team Roles and Accountabilities](https://resources.scrumalliance.org/Article/scrum-team)
 ## **Product Owner:** [Moshea Smith](https://github.com/40739022)
 
