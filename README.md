@@ -4,8 +4,8 @@
 
 * Master Build Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=master)
 * Develop Branch Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=develop)
-* License [![LICENSE](https://img.shields.io/github/license/apkiys/sem.svg?style=flat-square)](https://github.com/apkiys/sem/blob/master/LICENSE)
-* Release [![Releases](https://img.shields.io/github/release/apkiys/sem/all.svg?style=flat-square)](https://github.com/apkiys/sem/releases)
+* License [![LICENSE](https://img.shields.io/github/license/apkiys/devopsgrp5.svg?style=flat-square)](https://github.com/apkiys/sem/blob/master/LICENSE)
+* Release [![Releases](https://img.shields.io/github/release/apkiys/devopsgrp5/all.svg?style=flat-square)](https://github.com/apkiys/sem/releases)
 
 Reference: [The Scrum Team Roles and Accountabilities](https://resources.scrumalliance.org/Article/scrum-team)
 ## **Product Owner:** [Moshea Smith](https://github.com/40739022)
