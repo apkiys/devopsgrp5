@@ -1,5 +1,5 @@
 ## Use Cases
-|use case name|              world reports                        |
+|use case name|              World Reports                        |
 |-------------|---------------------------------------------------|
 |Use case ID  |    Case 1                                         |
 |Actor        |user|

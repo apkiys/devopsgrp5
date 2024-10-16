@@ -1,0 +1,17 @@
+@startuml
+
+actor P3 as "User"
+
+rectangle "World DB" {
+    usecase UC3a as "Select Country"
+    usecase UC3b as "Generate report based on country"
+    usecase UC3c as "Save Report"
+
+    P3 - UC3a
+    P3 - UC3c
+
+    UC3a ..> UC3b
+    UC3b ..> UC3c
+}
+
+@enduml

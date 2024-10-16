@@ -1,0 +1,17 @@
+@startuml
+
+actor P2 as "User"
+
+rectangle "World DB" {
+    usecase UC2a as "Select Language"
+    usecase UC2b as "Generate report based on language"
+    usecase UC2c as "Save Report"
+
+    P2 - UC2a
+    P2 - UC2c
+
+    UC2a ..> UC2b
+    UC2b ..> UC2c
+}
+
+@enduml

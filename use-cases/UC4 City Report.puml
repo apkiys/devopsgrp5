@@ -1,0 +1,17 @@
+@startuml
+
+actor P4 as "User"
+
+rectangle "World DB" {
+    usecase UC4a as "Select City"
+    usecase UC4b as "Generate report based on city"
+    usecase UC4c as "Save Report"
+
+    P4 - UC4a
+    P4 - UC4c
+
+    UC4a ..> UC4b
+    UC4b ..> UC4c
+}
+
+@enduml

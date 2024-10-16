@@ -1,0 +1,17 @@
+@startuml
+
+actor P5 as "User"
+
+rectangle "World DB" {
+    usecase UC5a as "Select Capital City"
+    usecase UC5b as "Generate report based on capital city"
+    usecase UC5c as "Save Report"
+
+    P5 - UC5a
+    P5 - UC5c
+
+    UC5a ..> UC5b
+    UC5b ..> UC5c
+}
+
+@enduml
