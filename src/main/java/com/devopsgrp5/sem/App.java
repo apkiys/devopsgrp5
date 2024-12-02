@@ -25,6 +25,7 @@ public class App
 
         // Check document in collection
         Document myDoc = collection.find().first();
+        //Prints document in command line
         System.out.println(myDoc.toJson());
     }
 }
