@@ -63,7 +63,7 @@ jobs:
       - name: Package and Run docker compose
         run: |
           mvn package -DskipTests
-          docker compose up --abort-on-container-exit
+          timeout 300s docker compose up --abort-on-container-exit --exit-code-from app
       - name: view logs
         run: docker logs devops-app-1
       - name: Copy Output

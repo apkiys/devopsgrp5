@@ -4,8 +4,10 @@
 ![workflow](https://github.com/apkiys/devops/actions/workflows/main.yml/badge.svg)
 
 
-* Master Build Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=master)
-* Develop Branch Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=develop)
+* Master Build Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=master) [![codecov](https://codecov.io/github/apkiys/devopsgrp5/graph/badge.svg?token=0CLTZQW58N)](https://codecov.io/github/apkiys/devopsgrp5)
+
+* Develop Branch Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=develop) [![codecov](https://codecov.io/gh/apkiys/devops/graph/badge.svg?token=DU104QWHXG)](https://codecov.io/gh/apkiys/devops)
+
 * License [![LICENSE](https://img.shields.io/github/license/apkiys/devopsgrp5)](https://github.com/apkiys/devopsgrp5/blob/master/LICENSE)
 * Release [![Releases](https://img.shields.io/github/release/apkiys/devopsgrp5/all.svg?style=flat-square)](https://github.com/apkiys/devopsgrp5/releases)
 

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,6 +25,7 @@ public class App {
 
     public static void main(String[] args) throws IOException {
 
+
         // Connect to database
         if (args.length < 1) {
             connect("localhost:33060", 0);
@@ -36,8 +38,54 @@ public class App {
             //System.exit(0);
         }
 
-        SpringApplication.run(App.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(App.class, args);
+        // Simulate application tasks
+        System.out.println("Application tasks running...");
+        // Shutdown the application after tasks are completed
+        new Thread(() -> {
+            try {
+                Thread.sleep(10000); // Simulate 10 seconds of runtime
+                System.out.println("Shutting down the application...");
+                context.close(); // Gracefully close Spring Boot context
+            } catch (InterruptedException e) {
+                System.err.println("Error during shutdown: " + e.getMessage());
+            }
+        }).start();
+    }
 
+    @RequestMapping("countries")
+    public ArrayList<Country> getCountries() {
+        ArrayList<Country> countries = new ArrayList<>();
+        try {
+
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // SQL query to join country and city tables
+            String sql = "SELECT c.Code, c.Name, c.Continent, c.Region, c.Population, c.Capital, " +
+                    "ct.Name AS CapitalCityName " +
+                    "FROM country c " +
+                    "LEFT JOIN city ct ON c.Capital = ct.ID";
+            // Execute SQL query
+            ResultSet rset = stmt.executeQuery(sql);
+            //cycle
+            while (rset.next()) {
+                String code = rset.getString("Code");
+                String name = rset.getString("Name");
+                String continent = rset.getString("Continent");
+                String region = rset.getString("Region");
+                long population = rset.getLong("Population");
+                String capitalCityName = rset.getString("CapitalCityName"); // Name from the city table
+                Country country = new Country(code, name, continent, region,
+                        population, capitalCityName);
+                countries.add(country);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to get details");
+            return null;
+        }
+        return countries;
     }
 
     @RequestMapping("cities")
@@ -99,6 +147,36 @@ public class App {
         }
         System.out.println(city);
         return cities;
+    }
+
+    @RequestMapping("capitals")
+    public ArrayList<CapitalCity> getCapitalCities() {
+        ArrayList<CapitalCity> capitalCities = new ArrayList<>();
+        try {
+            // Create an SQL statement
+            Statement stmt = con.createStatement();
+            // SQL query to get country name, capital city name, and population
+            String sql = "SELECT c.Name AS countryName, ct.Name AS capitalCityName, c.Population " +
+                    "FROM country c " +
+                    "JOIN city ct ON c.Capital = ct.ID";
+            // Execute SQL query
+            ResultSet rset = stmt.executeQuery(sql);
+
+            // Process the result set
+            while (rset.next()) {
+                String countryName = rset.getString("countryName");
+                String capitalCityName = rset.getString("capitalCityName");
+                long population = rset.getLong("Population");
+
+                CapitalCity capitalCity = new CapitalCity(countryName, capitalCityName, population);
+                capitalCities.add(capitalCity);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Failed to fetch capital cities");
+            return null;
+        }
+        return capitalCities;
     }
 
     public static void report2() {
@@ -177,6 +255,16 @@ public class App {
             } catch (Exception e) {
                 System.out.println("Error closing connection to database");
             }
+        }
+    }
+
+    public void printCountryReport(ArrayList<Country> countries) {
+        if (countries == null) {
+            System.out.println("No countries found");
+            return;
+        }
+        for (Country country : countries) {
+            System.out.println(country);
         }
     }
 
