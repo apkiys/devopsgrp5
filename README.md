@@ -66,7 +66,7 @@ To achieve these aims, scrum masters perform the following activities:
 * Persuasive. Works to remove impediments throughout the organization.
 * Connected. Knows who to talk to (or finds out) to solve problems and resolve issues.
 
-## **Developers:** [Faridah Olamide Agbaje](https://github.com/faridahyounique) | [Chris Pang](https://github.com/apkiys) | [Kyle Smith](https://github.com/KyleSmith407) | [Heather Tirivanhu](https://github.com/HeatherTirivanhu98)
+## **Developers:** [Faridah Olamide Agbaje](https://github.com/faridahyounique) | [Chris Pang](https://github.com/apkiys) | [Kyle Smith](https://github.com/KyleSmith407) | [Heather Tirivanhu](https://github.com/HeatherTirivanhu98)| [Moshea Smith](https://github.com/HeatherTirivanhu98)
 
 **Scrum Developer Authority:** The developers decide how to accomplish the work set forth by the product owner.
 
