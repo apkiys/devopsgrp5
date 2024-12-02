@@ -65,9 +65,9 @@ jobs:
           mvn package -DskipTests
           timeout 300s docker compose up --abort-on-container-exit --exit-code-from app
       - name: view logs
-        run: docker logs devops-app-1
+        run: docker logs devopsgrp5-app-1
       - name: Copy Output
-        run: docker container cp devops-app-1:./tmp/output ./
+        run: docker container cp devopsgrp5-app-1:./tmp/output ./
       - name: List dirs
         run: |
           pwd
