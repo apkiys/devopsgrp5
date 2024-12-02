@@ -1,0 +1,308 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > App</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.napier.devops</a>
+</div>
+
+<h1>Coverage Summary for Class: App (com.napier.devops)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">App</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (3/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (4/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.2%
+  </span>
+  <span class="absValue">
+    (6/73)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.napier.devops;
+&nbsp;
+&nbsp;import org.springframework.boot.SpringApplication;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;
+&nbsp;import java.io.BufferedWriter;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileWriter;
+&nbsp;import java.io.IOException;
+&nbsp;import java.sql.*;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;@SpringBootApplication
+&nbsp;@RestController
+<b class="fc">&nbsp;public class App {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Connection to MySQL database.
+&nbsp;     */
+<b class="fc">&nbsp;    private static Connection con = null;</b>
+&nbsp;
+&nbsp;    public static void main(String[] args) throws IOException {
+&nbsp;
+&nbsp;        // Connect to database
+<b class="nc">&nbsp;        if (args.length &lt; 1) {</b>
+<b class="nc">&nbsp;            connect(&quot;localhost:33060&quot;, 0);</b>
+&nbsp;        } else {
+&nbsp;            //connect via docker or actions
+<b class="nc">&nbsp;            connect(args[0], 10000);</b>
+<b class="nc">&nbsp;            report2();</b>
+&nbsp;            //needed on actions else build runs forever
+&nbsp;            // changed added dummy container that sleeps for a min then exits so actions works
+&nbsp;            //System.exit(0);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        SpringApplication.run(App2.class, args);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;cities&quot;)
+&nbsp;    public ArrayList&lt;City&gt; getCities() {
+<b class="nc">&nbsp;        ArrayList&lt;City&gt; cities = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+&nbsp;
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // Create string for SQL statement
+<b class="nc">&nbsp;            String sql = &quot;select * from city&quot;;</b>
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;            //cycle
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                Integer id = rset.getInt(&quot;ID&quot;);</b>
+<b class="nc">&nbsp;                String name = rset.getString(&quot;Name&quot;);</b>
+<b class="nc">&nbsp;                String countryCode = rset.getString(&quot;CountryCode&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                Integer population = rset.getInt(&quot;Population&quot;);</b>
+<b class="nc">&nbsp;                City city = new City(id, name, countryCode, district, population);</b>
+<b class="nc">&nbsp;                cities.add(city);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Failed to get details&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return cities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;city&quot;)
+&nbsp;    public ArrayList&lt;City&gt; getCity(@RequestParam(value = &quot;id&quot;) String id) {
+<b class="nc">&nbsp;        City city = null;</b>
+<b class="nc">&nbsp;        ArrayList&lt;City&gt; cities = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+&nbsp;
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // Create string for SQL statement
+<b class="nc">&nbsp;            String sql = &quot;select * from city where ID = &quot; + id;</b>
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;            //cycle
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                String name = rset.getString(&quot;Name&quot;);</b>
+<b class="nc">&nbsp;                String countryCode = rset.getString(&quot;CountryCode&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                Integer population = rset.getInt(&quot;Population&quot;);</b>
+<b class="nc">&nbsp;                city = new City(Long.parseLong(id), name, countryCode, district, population);</b>
+<b class="nc">&nbsp;                cities.add(city);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Failed to get details&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        System.out.println(city);</b>
+<b class="nc">&nbsp;        return cities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void report2() {
+<b class="nc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // Create string for SQL statement
+<b class="nc">&nbsp;            String sql = &quot;select * from country&quot;;</b>
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;            //cycle
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String name = rset.getString(&quot;name&quot;);</b>
+<b class="nc">&nbsp;                Integer population = rset.getInt(&quot;population&quot;);</b>
+<b class="nc">&nbsp;                sb.append(name + &quot;\t&quot; + population + &quot;\r\n&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            new File(&quot;./output/&quot;).mkdir();</b>
+<b class="nc">&nbsp;            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(&quot;./output/report1.txt&quot;)));</b>
+<b class="nc">&nbsp;            writer.write(sb.toString());</b>
+&nbsp;            writer.close();
+<b class="nc">&nbsp;            System.out.println(sb.toString());</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Failed to get details&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Connect to the MySQL database.
+&nbsp;     *
+&nbsp;     * @param conString Use db:3306 for docker and localhost:33060 for local or Integration Tests
+&nbsp;     * @param
+&nbsp;     */
+&nbsp;    public static void connect(String conString, int delay) {
+&nbsp;        try {
+&nbsp;            // Load Database driver
+<b class="nc">&nbsp;            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</b>
+&nbsp;        } catch (ClassNotFoundException e) {
+<b class="nc">&nbsp;            System.out.println(&quot;Could not load SQL driver&quot;);</b>
+<b class="nc">&nbsp;            System.exit(-1);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        int retries = 10;</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; retries; ++i) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Connecting to database...&quot;);</b>
+&nbsp;            try {
+&nbsp;                // Wait a bit for db to start
+<b class="nc">&nbsp;                Thread.sleep(delay);</b>
+&nbsp;                // Connect to database
+&nbsp;                //Added allowPublicKeyRetrieval=true to get Integration Tests
+&nbsp;                // to work. Possibly due to accessing from another class?
+<b class="nc">&nbsp;                con = DriverManager.getConnection(</b>
+&nbsp;                        &quot;jdbc:mysql://&quot; + conString + &quot;/world?allowPublicKeyRetrieval=true&amp;useSSL&quot; + &quot;=false&quot;, &quot;root&quot;,
+&nbsp;                        &quot;example&quot;);
+<b class="nc">&nbsp;                System.out.println(&quot;Successfully connected&quot;);</b>
+&nbsp;                break;
+&nbsp;            } catch (SQLException sqle) {
+<b class="nc">&nbsp;                System.out.println(&quot;Failed to connect to database attempt &quot; + Integer.toString(i));</b>
+<b class="nc">&nbsp;                System.out.println(sqle.getMessage());</b>
+&nbsp;            } catch (InterruptedException ie) {
+<b class="nc">&nbsp;                System.out.println(&quot;Thread interrupted? Should not happen.&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Disconnect from the MySQL database.
+&nbsp;     */
+&nbsp;    public static void disconnect() {
+<b class="nc">&nbsp;        if (con != null) {</b>
+&nbsp;            try {
+&nbsp;                // Close connection
+<b class="nc">&nbsp;                con.close();</b>
+&nbsp;            } catch (Exception e) {
+<b class="nc">&nbsp;                System.out.println(&quot;Error closing connection to database&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void printCityReport(ArrayList&lt;City&gt; cities) {
+<b class="fc">&nbsp;        if (cities == null) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;No cities found&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        for (City city : cities) {</b>
+<b class="fc">&nbsp;            System.out.println(city);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-03 02:39</div>
+</div>
+</body>
+</html>
