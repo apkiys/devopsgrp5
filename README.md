@@ -1,7 +1,8 @@
 # SET09803 2024-5 TR1 001 DevOps Global Online Module for Group 5
 
-* ![workflow](https://github.com/apkiys/devops/actions/workflows/main.yml/badge.svg)
-* ![Static Badge](https://img.shields.io/badge/Group%205's%20Project-passing-brightgreen?logo=github)
+![workflow](https://github.com/apkiys/devopsgrp5/actions/workflows/main.yml/badge.svg)
+![workflow](https://github.com/apkiys/devops/actions/workflows/main.yml/badge.svg)
+
 
 * Master Build Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=master)
 * Develop Branch Status ![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/apkiys/devopsgrp5/main.yml?branch=develop)
