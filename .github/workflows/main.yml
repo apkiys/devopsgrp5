@@ -18,10 +18,10 @@ jobs:
       - name: Run docker compose
         run: docker compose up --abort-on-container-exit
       - name: view logs
-        run: docker logs devops3-app-1
+        run: docker logs devops-app-1
       # copy from docker container back to our execution environment
       - name: Copy Output
-        run: docker container cp devops3-app-1:./tmp/output ./
+        run: docker container cp devops-app-1:./tmp/output ./
       # check files on actions environment
       # run: | allows multiple commands
       - name: List dirs
