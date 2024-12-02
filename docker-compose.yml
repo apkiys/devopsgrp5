@@ -7,6 +7,5 @@ services:
   # Build the db as name world from the Dockerfile in the db folder
   world:
     build: db/.
-    # keep port forwarding so we can test app locally without docker
     ports:
       - "33060:3306"
