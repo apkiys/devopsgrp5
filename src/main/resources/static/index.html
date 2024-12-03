@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+            color: #666;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>DevOps Group 5 Home Page</h1>
+    <p>Select the report you want to see:</p>
+
+    <div class="button-container">
+        <div class="column">
+            <!-- 11 Buttons -->
+            <a href="/report01" class="button">01.All the countries in the world organised by largest population to smallest</a>
+            <a href="/report02?continentName=Europe" class="button">02.All the countries in a continent organised by largest population to smallest</a>
+            <a href="/report03?regionName=Western Europe" class="button">03.All the countries in a region organised by largest population to smallest</a>
+            <a href="/report04?n=20" class="button">04.The top N populated countries in the world where N is provided by the user</a>
+            <a href="/report05?continentName=Europe&n=20" class="button">05.The top N populated countries in a continent where N is provided by the user</a>
+            <a href="/report06?regionName=Caribbean&n=20" class="button">06.The top N populated countries in a region where N is provided by the user</a>
+            <a href="/report07" class="button">07.All the cities in the world organised by largest population to smallest</a>
+            <a href="/report08?continentName=Asia" class="button">08.All the cities in a continent organised by largest population to smallest</a>
+            <a href="/report09?regionName=Middle East" class="button">09.All the cities in a region organised by largest population to smallest</a>
+            <a href="/report10?countryName=China" class="button">10.All the cities in a country organised by largest population to smallest</a>
+            <a href="/report11?districtName=Buenos Aires" class="button">11.All the cities in a district organised by largest population to smallest</a>
+            <a href="/report12?n=20" class="button">12.The top N populated cities in the world where N is provided by the user</a>
+            <a href="/report13?continentName=Africa&n=20" class="button">13.The top N populated cities in a continent where N is provided by the user</a>
+            <a href="/report14?regionName=Polynesia&n=20" class="button">14.The top N populated cities in a region where N is provided by the user</a>
+            <a href="/report15?countryName=India&n=20" class="button">15.The top N populated cities in a country where N is provided by the user</a>
+            <a href="/report16?districtName=Noord-Holland&n=20" class="button">16.The top N populated cities in a district where N is provided by the user</a>
+            <a href="/report17" class="button">17.All the capital cities in the world organised by largest population to smallest</a>
+            <a href="/report18?continentName=South America" class="button">18.All the capital cities in a continent organised by largest population to smallest</a>
+            <a href="/report19?regionName=Baltic Countries" class="button">19.All the capital cities in a region organised by largest to smallest</a>
+            <a href="/report20?n=20" class="button">20.The top N populated capital cities in the world where N is provided by the user</a>
+            <a href="/report21?continentName=Asia&n=20" class="button">21.The top N populated capital cities in a continent where N is provided by the user</a>
+            <a href="/report22?regionName=Eastern Africa&n=20" class="button">22.The top N populated capital cities in a region where N is provided by the user</a>
+            <a href="/report23" class="button">23.The population of people, people living in cities, and people not living in cities in each continent</a>
+            <a href="/report24" class="button">24.The population of people, people living in cities, and people not living in cities in each region</a>
+            <a href="/report25" class="button">25.The population of people, people living in cities, and people not living in cities in each country</a>
+            <a href="/report26" class="button">26.The population of the world</a>
+            <a href="/report27?continentName=North America" class="button">27.The population of a continent</a>
+            <a href="/report28?regionName=Central Africa" class="button">28.The population of a region</a>
+            <a href="/report29?countryName=United Kingdom" class="button">29.The population of a country</a>
+            <a href="/report30?districtName=Abu Dhabi" class="button">30.The population of a district</a>
+            <a href="/report31?cityName=Geelong" class="button">31.The population of a city</a>
+            <a href="/report32" class="button">32.The number of people who speak different languages</a>
+            <a href="/report33" class="button">33.A country report</a>
+            <a href="/report34" class="button">34.A city report</a>
+            <a href="/report35" class="button">35.A capital city report</a>
+            <a href="/report36" class="button">36.Population report</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1209,8 +1209,7 @@ public class App {
             htmlTable.append("<head><title>City Report</title></head>");
             htmlTable.append("<body>");
             htmlTable.append("<h2>18. Capital Cities in ").append(continentName).append(" (Largest to Smallest)</h2>");
-            htmlTable.append("<h2>Search by: http://localhost:8080/report18?continentName=(enter your continent " +
-                    "without the bracket)</h2>");
+            htmlTable.append("<h2>Search by: http://localhost:8080/report18?continentName=(enter your continent without the bracket)</h2>");
             htmlTable.append("<table border='1'>");
             htmlTable.append("<tr>");
             htmlTable.append("<th>Capital City Name</th>");

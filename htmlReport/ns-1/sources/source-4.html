@@ -55,7 +55,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/32)
+    (0/8)
   </span>
 </td>
 <td class="coverageStat">
@@ -63,7 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/32)
+    (0/14)
   </span>
 </td>
 </tr>
@@ -78,166 +78,52 @@ Current scope:     <a href="../../index.html">all classes</a>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.napier.devops;
 &nbsp;
 &nbsp;
-<b class="nc">&nbsp;public class Country {</b>
-&nbsp;
+&nbsp;public class Country {
 &nbsp;    private String code;
 &nbsp;    private String name;
 &nbsp;    private String continent;
 &nbsp;    private String region;
-&nbsp;    private double surfaceArea;
-&nbsp;    private long indepYear;
 &nbsp;    private long population;
-&nbsp;    private double lifeExpectancy;
-&nbsp;    private double gnp;
-&nbsp;    private double gnpOld;
-&nbsp;    private String localName;
-&nbsp;    private String governmentForm;
-&nbsp;    private String headOfState;
-&nbsp;    private long capital;
-&nbsp;    private String code2;
+&nbsp;    private String capital;
 &nbsp;
+&nbsp;    public Country(String code, String name, String continent, String region,
+<b class="nc">&nbsp;                   long population, String capital) {</b>
+<b class="nc">&nbsp;        this.code = code;</b>
+<b class="nc">&nbsp;        this.name = name;</b>
+<b class="nc">&nbsp;        this.continent = continent;</b>
+<b class="nc">&nbsp;        this.region = region;</b>
+<b class="nc">&nbsp;        this.population = population;</b>
+<b class="nc">&nbsp;        this.capital = capital;</b>
+&nbsp;    }
 &nbsp;
 &nbsp;    public String getCode() {
 <b class="nc">&nbsp;        return code;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public void setCode(String code) {
-<b class="nc">&nbsp;        this.code = code;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
 &nbsp;    public String getName() {
 <b class="nc">&nbsp;        return name;</b>
 &nbsp;    }
-&nbsp;
-&nbsp;    public void setName(String name) {
-<b class="nc">&nbsp;        this.name = name;</b>
-&nbsp;    }
-&nbsp;
 &nbsp;
 &nbsp;    public String getContinent() {
 <b class="nc">&nbsp;        return continent;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public void setContinent(String continent) {
-<b class="nc">&nbsp;        this.continent = continent;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
 &nbsp;    public String getRegion() {
 <b class="nc">&nbsp;        return region;</b>
 &nbsp;    }
-&nbsp;
-&nbsp;    public void setRegion(String region) {
-<b class="nc">&nbsp;        this.region = region;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public double getSurfaceArea() {
-<b class="nc">&nbsp;        return surfaceArea;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setSurfaceArea(double surfaceArea) {
-<b class="nc">&nbsp;        this.surfaceArea = surfaceArea;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public long getIndepYear() {
-<b class="nc">&nbsp;        return indepYear;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setIndepYear(long indepYear) {
-<b class="nc">&nbsp;        this.indepYear = indepYear;</b>
-&nbsp;    }
-&nbsp;
 &nbsp;
 &nbsp;    public long getPopulation() {
 <b class="nc">&nbsp;        return population;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public void setPopulation(long population) {
-<b class="nc">&nbsp;        this.population = population;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public double getLifeExpectancy() {
-<b class="nc">&nbsp;        return lifeExpectancy;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setLifeExpectancy(double lifeExpectancy) {
-<b class="nc">&nbsp;        this.lifeExpectancy = lifeExpectancy;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public double getGnp() {
-<b class="nc">&nbsp;        return gnp;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setGnp(double gnp) {
-<b class="nc">&nbsp;        this.gnp = gnp;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public double getGnpOld() {
-<b class="nc">&nbsp;        return gnpOld;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setGnpOld(double gnpOld) {
-<b class="nc">&nbsp;        this.gnpOld = gnpOld;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public String getLocalName() {
-<b class="nc">&nbsp;        return localName;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setLocalName(String localName) {
-<b class="nc">&nbsp;        this.localName = localName;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public String getGovernmentForm() {
-<b class="nc">&nbsp;        return governmentForm;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setGovernmentForm(String governmentForm) {
-<b class="nc">&nbsp;        this.governmentForm = governmentForm;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public String getHeadOfState() {
-<b class="nc">&nbsp;        return headOfState;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setHeadOfState(String headOfState) {
-<b class="nc">&nbsp;        this.headOfState = headOfState;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public long getCapital() {
+&nbsp;    public String getCapital() {
 <b class="nc">&nbsp;        return capital;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setCapital(long capital) {
-<b class="nc">&nbsp;        this.capital = capital;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    public String getCode2() {
-<b class="nc">&nbsp;        return code2;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setCode2(String code2) {
-<b class="nc">&nbsp;        this.code2 = code2;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public String toString() {
 <b class="nc">&nbsp;        return &quot;Country{&quot; + &quot;code=&#39;&quot; + code + &#39;\&#39;&#39; + &quot;, name=&#39;&quot; + name + &#39;\&#39;&#39; + &quot;, continent=&#39;&quot; + continent + &#39;\&#39;&#39;</b>
-&nbsp;                + &quot;, region=&#39;&quot; + region + &#39;\&#39;&#39; + &quot;, surfaceArea=&quot; + surfaceArea + &quot;, indepYear=&quot; + indepYear
-&nbsp;                + &quot;, population=&quot; + population + &quot;, lifeExpectancy=&quot; + lifeExpectancy + &quot;, gnp=&quot; + gnp + &quot;, gnpOld=&quot;
-&nbsp;                + gnpOld + &quot;, localName=&#39;&quot; + localName + &#39;\&#39;&#39; + &quot;, governmentForm=&#39;&quot; + governmentForm + &#39;\&#39;&#39;
-&nbsp;                + &quot;, headOfState=&#39;&quot; + headOfState + &#39;\&#39;&#39; + &quot;, capital=&quot; + capital + &quot;, code2=&#39;&quot; + code2 + &#39;\&#39;&#39; + &#39;}&#39;;
+&nbsp;                + &quot;, region=&#39;&quot; + region + &#39;\&#39;&#39; + &quot;, population=&quot; + population + &quot;, capital=&quot; + capital + &#39;}&#39;;
 &nbsp;    }
 &nbsp;}
 </code>
@@ -263,7 +149,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-12-03 02:39</div>
+    <div style="float:right;">generated on 2024-12-04 02:46</div>
 </div>
 </body>
 </html>
