@@ -147,3 +147,112 @@ Reference: [Scrum Alliance Code of Ethics](https://www.scrumalliance.org/code-of
 
 ## 
 ***By working together as a team, we shall commit to upholding this Code of Conduct, fostering a productive, respectful, and collaborative environment to achieve our goals.***
+
+# Code Review 1 #
+## REVIEW MEETING: Week 6 ##
+
+The aim of this code review meeting is to check that the project workflow is set-up for the team, task management is set-up and that the initial requirements gathering has taken place via user stories and use cases.
+
+## Checklist Submission 1 (30% of CW mark) ##
+
+The following must be in place:
+
+* GitHub project for coursework set-up.
+* Product Backlog created.
+* Project builds to self-contained JAR with Maven.
+* Dockerfile for project set-up and works.
+* GitHub Actions for project set-up and build is working using JAR, and Docker on GitHub Actions.
+* Correct branches for GitFlow workflow created - includes master, develop, and release branches.
+* First release created on GitHub.
+* Code of Conduct defined.
+* Issues being used on GitHub.
+* Tasks defined as user stories.
+* Project integrated with Zube.io.
+* Kanban/Project Board being used.
+* Sprint Boards being used.
+* Full use cases defined.
+* Use case diagram created.
+
+## Graded Criteria Submission 1 (20% of CW mark) ##
+
+The following criteria will be assessed for overall quality:
+
+* Metrics from GitHub. Also used to assess individual contribution.
+* Code quality including comments.
+* Correct usage of branches.
+* Continuous integration working.
+* Use cases well defined.
+
+# Code Review 2 #
+## REVIEW MEETING: Week 13 ##
+The aim of this code review is to check that testing and deployment has been correctly specified.
+
+## Checklist Submission 2 (20% of CW mark) ##
+
+The following must be in place:
+
+* Quality and coverage of unit tests.
+* Suitable integration tests defined.
+* Continuous integration working. and tests running on GitHub Actions.
+* Deployment working.
+* Bug reporting system set-up.
+* Badges for
+  * Build status for master.
+  * Build status for develop.
+  * Code coverage of tests for master.
+  * Release name.
+  * License.
+
+## Project Requirements Met (16% of CW Mark) ##
+| ID | Name                                                                                                                   | Met | Screenshot |
+|----|------------------------------------------------------------------------------------------------------------------------|-----|------------|
+| 01 | All the countries in the world organised by largest population to smallest.                                            |     |            |
+| 02 | All the countries in a continent organised by largest population to smallest.                                          |     |            |
+| 03 | All the countries in a region organised by largest population to smallest.                                             |     |            |
+| 04 | The top N populated countries in the world where N is provided by the user.                                            |     |            |
+| 05 | The top N populated countries in a continent where N is provided by the user.                                          |     |            |
+| 06 | The top N populated countries in a region where N is provided by the user.                                             |     |            |
+| 07 | All the cities in the world organised by largest population to smallest.                                               |     |            |
+| 08 | All the cities in a continent organised by largest population to smallest.                                             |     |            |
+| 09 | All the cities in a region organised by largest population to smallest.                                                |     |            |
+| 10 | All the cities in a country organised by largest population to smallest.                                               |     |            |
+| 11 | All the cities in a district organised by largest population to smallest.                                              |     |            |
+| 12 | The top N populated cities in the world where N is provided by the user.                                               |     |            |
+| 13 | The top N populated cities in a continent where N is provided by the user.                                             |     |            |
+| 14 | The top N populated cities in a region where N is provided by the user.                                                |     |            |
+| 15 | The top N populated cities in a country where N is provided by the user.                                               |     |            |
+| 16 | The top N populated cities in a district where N is provided by the user.                                              |     |            |
+| 17 | All the capital cities in the world organised by largest population to smallest.                                       |     |            |
+| 18 | All the capital cities in a continent organised by largest population to smallest.                                     |     |            |
+| 19 | All the capital cities in a region organised by largest to smallest.                                                   |     |            |
+| 20 | The top N populated capital cities in the world where N is provided by the user.                                       |     |            |
+| 21 | The top N populated capital cities in a continent where N is provided by the user.                                     |     |            |
+| 22 | The top N populated capital cities in a region where N is provided by the user.                                        |     |            |
+| 23 | The population of people, people living in cities, and people not living in cities in each continent.                  |     |            |
+| 24 | The population of people, people living in cities, and people not living in cities in each region.                     |     |            |
+| 25 | The population of people, people living in cities, and people not living in cities in each country.                    |     |            |
+| 26 | The population of the world.                                                                                           |     |            |
+|    | The population of a continent.                                                                                         |     |            |
+|    | The population of a region.                                                                                            |     |            |
+|    | The population of a country.                                                                                           |     |            |
+|    | The population of a district.                                                                                          |     |            |
+|    | The population of a city.                                                                                              |     |            |
+| 27 | number of people who speak Chinese from greatest number to smallest, including the percentage of the world population. |     |            |
+|    | number of people who speak English from greatest number to smallest, including the percentage of the world population. |     |            |
+|    | number of people who speak Hindi from greatest number to smallest, including the percentage of the world population.   |     |            |
+|    | number of people who speak Spanish from greatest number to smallest, including the percentage of the world population. |     |            |
+|    | number of people who speak Arabic from greatest number to smallest, including the percentage of the world population.  |     |            |
+| 28 | A country report.                                                                                                      |     |            |
+| 29 | A city report.                                                                                                         |     |            |
+| 30 | A capital city report.                                                                                                 |     |            |
+| 31 | Population Report with The name of the continent/region/country.                                                       |     |            |
+|    | Population Report with The total population of the continent/region/country.                                           |     |            |
+|    | Population Report with The total population of the continent/region/country living in cities (including a %).          |     |            |
+| 32 | The total population of the continent/region/country not living in cities (including a %).                             |     |            |
+
+## Graded Criteria Submission 2 (14% of CW mark) ##
+
+The following criteria will be assessed for overall quality:
+
+* Correct use of GitHub and Kanban board and frequency of commits.
+* Code quality including comments.
