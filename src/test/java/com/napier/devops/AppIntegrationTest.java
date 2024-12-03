@@ -29,6 +29,6 @@ public class AppIntegrationTest
         assertEquals("Kabul", cities.get(0).getName());
         System.out.println("successfully retrieved " + cities.get(0));
 
-        App.report2();
+        App.outputReport00();
     }
 }

@@ -242,13 +242,15 @@ The following must be in place:
 |    | number of people who speak Hindi from greatest number to smallest, including the percentage of the world population.   |     |            |
 |    | number of people who speak Spanish from greatest number to smallest, including the percentage of the world population. |     |            |
 |    | number of people who speak Arabic from greatest number to smallest, including the percentage of the world population.  |     |            |
-| 28 | A country report.                                                                                                      |     |            |
-| 29 | A city report.                                                                                                         |     |            |
-| 30 | A capital city report.                                                                                                 |     |            |
+| 28 | A country report.                                                                                                      | Yes |            |
+| 29 | A city report.                                                                                                         | Yes |            |
+| 30 | A capital city report.                                                                                                 | Yes |            |
 | 31 | Population Report with The name of the continent/region/country.                                                       |     |            |
 |    | Population Report with The total population of the continent/region/country.                                           |     |            |
-|    | Population Report with The total population of the continent/region/country living in cities (including a %).          |     |            |
-| 32 | The total population of the continent/region/country not living in cities (including a %).                             |     |            |
+| 32 | Population Report with The total population of the continent/region/country living in cities (including a %).          |     |            |
+|    | The total population of the continent/region/country not living in cities (including a %).                             |     |            |
+
+3 requirements of 32 have been implemented, which is 9.38%.
 
 ## Graded Criteria Submission 2 (14% of CW mark) ##
 

@@ -32,7 +32,7 @@ public class App {
         } else {
             //connect via docker or actions
             connect(args[0], 10000);
-            report2();
+            outputReport00();
             //needed on actions else build runs forever
             // changed added dummy container that sleeps for a min then exits so actions works
             //System.exit(0);
@@ -179,7 +179,7 @@ public class App {
         return capitalCities;
     }
 
-    public static void report2() {
+    public static void outputReport00() {
         StringBuilder sb = new StringBuilder();
         try {
             // Create an SQL statement
@@ -192,10 +192,11 @@ public class App {
             while (rset.next()) {
                 String name = rset.getString("name");
                 Integer population = rset.getInt("population");
-                sb.append(name + "\t" + population + "\r\n");
+                // Print header
+                sb.append("|" + "\t" + name + "\t" + "|" + "\t" + population + "\t" + "|" + "\r\n");
             }
             new File("./output/").mkdir();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./output/report1.txt")));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./output/report00.txt")));
             writer.write(sb.toString());
             writer.close();
             System.out.println(sb.toString());
