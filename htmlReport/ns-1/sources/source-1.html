@@ -25,12 +25,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 <h1>Coverage Summary for Class: App (com.napier.devops)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -48,38 +45,59 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">App</td>
 <td class="coverageStat">
   <span class="percent">
-    100%
+    10.2%
   </span>
   <span class="absValue">
-    (1/1)
+    (5/49)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    33.3%
+    1.9%
   </span>
   <span class="absValue">
-    (3/9)
+    (2/106)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    25%
+    1.3%
   </span>
   <span class="absValue">
-    (4/16)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    8.2%
-  </span>
-  <span class="absValue">
-    (6/73)
+    (17/1315)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">App$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    10.2%
+  </span>
+  <span class="absValue">
+    (5/49)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.9%
+  </span>
+  <span class="absValue">
+    (2/106)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.3%
+  </span>
+  <span class="absValue">
+    (17/1315)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -89,11 +107,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.napier.devops;
 &nbsp;
+&nbsp;import hello.Application;
 &nbsp;import org.springframework.boot.SpringApplication;
 &nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
 &nbsp;import org.springframework.web.bind.annotation.RequestMapping;
 &nbsp;import org.springframework.web.bind.annotation.RequestParam;
 &nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.context.ConfigurableApplicationContext;
 &nbsp;
 &nbsp;import java.io.BufferedWriter;
 &nbsp;import java.io.File;
@@ -112,21 +132,63 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;    private static Connection con = null;</b>
 &nbsp;
 &nbsp;    public static void main(String[] args) throws IOException {
-&nbsp;
 &nbsp;        // Connect to database
-<b class="nc">&nbsp;        if (args.length &lt; 1) {</b>
-<b class="nc">&nbsp;            connect(&quot;localhost:33060&quot;, 0);</b>
+<b class="pc">&nbsp;        if (args.length &lt; 1) {</b>
+<b class="fc">&nbsp;            connect(&quot;localhost:33060&quot;, 0);</b>
 &nbsp;        } else {
 &nbsp;            //connect via docker or actions
 <b class="nc">&nbsp;            connect(args[0], 10000);</b>
-<b class="nc">&nbsp;            report2();</b>
-&nbsp;            //needed on actions else build runs forever
-&nbsp;            // changed added dummy container that sleeps for a min then exits so actions works
-&nbsp;            //System.exit(0);
+<b class="nc">&nbsp;            outputReport00();</b>
 &nbsp;        }
 &nbsp;
-<b class="nc">&nbsp;        SpringApplication.run(App2.class, args);</b>
+<b class="fc">&nbsp;        ConfigurableApplicationContext context = SpringApplication.run(App.class, args);</b>
+&nbsp;        // Simulate application tasks
+<b class="fc">&nbsp;        System.out.println(&quot;Application tasks running...&quot;);</b>
+&nbsp;        // Shutdown the application after tasks are completed
+<b class="fc">&nbsp;        new Thread(() -&gt; {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                Thread.sleep(10000); // Simulate 10 seconds of runtime</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Shutting down the application...&quot;);</b>
+&nbsp;                context.close(); // Gracefully close Spring Boot context
+&nbsp;            } catch (InterruptedException e) {
+<b class="nc">&nbsp;                System.err.println(&quot;Error during shutdown: &quot; + e.getMessage());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }).start();</b>
+&nbsp;    }
 &nbsp;
+&nbsp;    @RequestMapping(&quot;countries&quot;)
+&nbsp;    public ArrayList&lt;Country&gt; getCountries() {
+<b class="nc">&nbsp;        ArrayList&lt;Country&gt; countries = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+&nbsp;
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // SQL query to join country and city tables
+<b class="nc">&nbsp;            String sql = &quot;SELECT c.Code, c.Name, c.Continent, c.Region, c.Population, c.Capital, &quot; +</b>
+&nbsp;                    &quot;ct.Name AS CapitalCityName &quot; +
+&nbsp;                    &quot;FROM country c &quot; +
+&nbsp;                    &quot;LEFT JOIN city ct ON c.Capital = ct.ID&quot;;
+&nbsp;            // Execute SQL query
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;            //cycle
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String code = rset.getString(&quot;Code&quot;);</b>
+<b class="nc">&nbsp;                String name = rset.getString(&quot;Name&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;); // Name from the city table</b>
+<b class="nc">&nbsp;                Country country = new Country(code, name, continent, region,</b>
+&nbsp;                        population, capitalCityName);
+<b class="nc">&nbsp;                countries.add(country);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Failed to get details&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return countries;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @RequestMapping(&quot;cities&quot;)
@@ -157,6 +219,2137 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            return null;</b>
 &nbsp;        }
 <b class="nc">&nbsp;        return cities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report01&quot;)
+&nbsp;    public String getReport01() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all countries in the world, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Continent, country.Region, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;01. All Countries in the World (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report02&quot;)
+&nbsp;    public String getReport02(@RequestParam(value = &quot;continentName&quot;) String continentName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all countries in the specified continent, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Continent, country.Region, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;02. Countries in &quot;).append(continentName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report02?continentName=(enter your continent without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report03&quot;)
+&nbsp;    public String getCountriesInRegion(@RequestParam(value = &quot;regionName&quot;) String regionName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all countries in the specified region, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Region, country.Continent, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;03. Countries in &quot;).append(regionName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report03?regionName=(enter your region without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report04&quot;)
+&nbsp;    public String getReport04(@RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated countries in the world
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Continent, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setInt(1, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;04. Top &quot;).append(n).append(&quot; Populated Countries in the World&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report04?n=(enter your n without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report05&quot;)
+&nbsp;    public String getReport05(
+&nbsp;            @RequestParam(value = &quot;continentName&quot;) String continentName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated countries in the specified continent
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Continent, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;05. Top &quot;).append(n).append(&quot; Populated Countries in &quot;).append(continentName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report05?continentName=(enter your continent without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report06&quot;)
+&nbsp;    public String getReport06(
+&nbsp;            @RequestParam(value = &quot;regionName&quot;) String regionName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated countries in the specified region
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Region, country.Continent, country.Population &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY country.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;06. Top &quot;).append(n).append(&quot; Populated Countries in &quot;).append(regionName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report06?regionName=(enter your region without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report07&quot;)
+&nbsp;    public String getReport07() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all cities in the world, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;07. All Cities in the World (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report08&quot;)
+&nbsp;    public String getReport08(@RequestParam(value = &quot;continentName&quot;) String continentName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all cities in the specified continent, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;08. Cities in &quot;).append(continentName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report08?continentName=(enter your continent without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report09&quot;)
+&nbsp;    public String getReport09(@RequestParam(value = &quot;regionName&quot;) String regionName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all cities in the specified region, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Region &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;09. Cities in &quot;).append(regionName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report09?regionName=(enter your region without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report10&quot;)
+&nbsp;    public String getReport10(@RequestParam(value = &quot;countryName&quot;) String countryName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all cities in the specified country, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Name = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, countryName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;10. Cities in &quot;).append(countryName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report10?countryName=(enter your country without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String country = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(country).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report11&quot;)
+&nbsp;    public String getReport11(@RequestParam(value = &quot;districtName&quot;) String districtName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all cities in the specified district, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE city.District = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, districtName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;11. Cities in &quot;).append(districtName).append(&quot; (Largest to Smallest Population)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report11?districtName=(enter your district without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report12&quot;)
+&nbsp;    public String getReport12(@RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated cities in the world
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setInt(1, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;12. Top &quot;).append(n).append(&quot; Populated Cities in the World&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report12?n=(enter your n without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report13&quot;)
+&nbsp;    public String getReport13(
+&nbsp;            @RequestParam(value = &quot;continentName&quot;) String continentName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated cities in the specified continent
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;13. Top &quot;).append(n).append(&quot; Populated Cities in &quot;).append(continentName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report13?continentName=(enter your continent without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report14&quot;)
+&nbsp;    public String getReport14(
+&nbsp;            @RequestParam(value = &quot;regionName&quot;) String regionName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated cities in the specified region
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName, country.Region &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;14. Top &quot;).append(n).append(&quot; Populated Cities in &quot;).append(regionName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report14?regionName=(enter your region without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report15&quot;)
+&nbsp;    public String getReport15(
+&nbsp;            @RequestParam(value = &quot;countryName&quot;) String countryName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated cities in the specified country
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code &quot; +
+&nbsp;                    &quot;WHERE country.Name = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, countryName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;15. Top &quot;).append(n).append(&quot; Populated Cities in &quot;).append(countryName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report15?countryName=(enter your country without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                String country = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(country).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report16&quot;)
+&nbsp;    public String getReport16(
+&nbsp;            @RequestParam(value = &quot;districtName&quot;) String districtName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated cities in the specified district
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CityName, city.Population, city.District &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;WHERE city.District = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, districtName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;16. Top &quot;).append(n).append(&quot; Populated Cities in &quot;).append(districtName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report16?districtName=(enter your district without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String cityName = rset.getString(&quot;CityName&quot;);</b>
+<b class="nc">&nbsp;                String district = rset.getString(&quot;District&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(district).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report17&quot;)
+&nbsp;    public String getReport17() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all capital cities in the world, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;17. Capital Cities in the World (Largest to Smallest)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report18&quot;)
+&nbsp;    public String getReport18(@RequestParam(value = &quot;continentName&quot;) String continentName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all capital cities in the specified continent, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName, country.Continent &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;18. Capital Cities in &quot;).append(continentName).append(&quot; (Largest to Smallest)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report18?continentName=(enter your continent &quot; +</b>
+&nbsp;                    &quot;without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report19&quot;)
+&nbsp;    public String getReport19(@RequestParam(value = &quot;regionName&quot;) String regionName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get all capital cities in the specified region, ordered by population
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName, country.Region &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;19. Capital Cities in &quot;).append(regionName).append(&quot; (Largest to Smallest)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report19?regionName=(enter your region without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report20&quot;)
+&nbsp;    public String getReport20(@RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated capital cities in the world
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setInt(1, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;20. Top &quot;).append(n).append(&quot; Populated Capital Cities in the World&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report20?n=(enter your n without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report21&quot;)
+&nbsp;    public String getReport21(
+&nbsp;            @RequestParam(value = &quot;continentName&quot;) String continentName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated capital cities in the specified continent
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;WHERE country.Continent = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;21. Top &quot;).append(n).append(&quot; Populated Capital Cities in &quot;).append(continentName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report21?continentName=(enter your continent without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report22&quot;)
+&nbsp;    public String getReport22(
+&nbsp;            @RequestParam(value = &quot;regionName&quot;) String regionName,
+&nbsp;            @RequestParam(value = &quot;n&quot;) int n) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the top N populated capital cities in the specified region
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, city.Population, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;JOIN city ON country.Capital = city.ID &quot; +
+&nbsp;                    &quot;WHERE country.Region = ? &quot; +
+&nbsp;                    &quot;ORDER BY city.Population DESC &quot; +
+&nbsp;                    &quot;LIMIT ?&quot;;
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+<b class="nc">&nbsp;            pstmt.setInt(2, n);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;22. Top &quot;).append(n).append(&quot; Populated Capital Cities in &quot;).append(regionName).append(&quot;&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report22?regionName=(enter your region without the bracket)&quot; +</b>
+&nbsp;                    &quot;&amp;n=(enter your n without the bracket)&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;CapitalCityName&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(capitalCityName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(population).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report23&quot;)
+&nbsp;    public String getReport23() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get population details for each continent
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Continent AS ContinentName, SUM(country.Population) AS TotalPopulation, &quot; +</b>
+&nbsp;                    &quot;IFNULL(SUM(city.Population), 0) AS CityPopulation &quot; +
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;LEFT JOIN city ON country.Code = city.CountryCode &quot; +
+&nbsp;                    &quot;GROUP BY country.Continent&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;23. The population report of people, people living in cities,&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;and people not living in cities in each continent.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population not in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String continentName = rset.getString(&quot;ContinentName&quot;);</b>
+<b class="nc">&nbsp;                long totalPopulation = rset.getLong(&quot;TotalPopulation&quot;);</b>
+<b class="nc">&nbsp;                long cityPopulation = rset.getLong(&quot;CityPopulation&quot;);</b>
+<b class="nc">&nbsp;                long nonCityPopulation = totalPopulation - cityPopulation;</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continentName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(totalPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(nonCityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get continent population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report24&quot;)
+&nbsp;    public String getReport24() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get population details for each region
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Region AS RegionName, SUM(country.Population) AS TotalPopulation, &quot; +</b>
+&nbsp;                    &quot;IFNULL(SUM(city.Population), 0) AS CityPopulation &quot; +
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;LEFT JOIN city ON country.Code = city.CountryCode &quot; +
+&nbsp;                    &quot;GROUP BY country.Region&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;24. The population report of people, people living in cities,&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;and people not living in cities in each region.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population not in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String regionName = rset.getString(&quot;RegionName&quot;);</b>
+<b class="nc">&nbsp;                long totalPopulation = rset.getLong(&quot;TotalPopulation&quot;);</b>
+<b class="nc">&nbsp;                long cityPopulation = rset.getLong(&quot;CityPopulation&quot;);</b>
+<b class="nc">&nbsp;                long nonCityPopulation = totalPopulation - cityPopulation;</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(regionName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(totalPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(nonCityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get region population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report25&quot;)
+&nbsp;    public String getReport25() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get population details for each country
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Name AS CountryName, country.Population AS TotalPopulation, &quot; +</b>
+&nbsp;                    &quot;IFNULL(SUM(city.Population), 0) AS CityPopulation &quot; +
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;LEFT JOIN city ON country.Code = city.CountryCode &quot; +
+&nbsp;                    &quot;GROUP BY country.Code&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;25. The population report of people, people living in cities,&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;and people not living in cities in each country.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population not in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long totalPopulation = rset.getLong(&quot;TotalPopulation&quot;);</b>
+<b class="nc">&nbsp;                long cityPopulation = rset.getLong(&quot;CityPopulation&quot;);</b>
+<b class="nc">&nbsp;                long nonCityPopulation = totalPopulation - cityPopulation;</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(totalPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(nonCityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report26&quot;)
+&nbsp;    public String getReport26() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the total population of the world
+<b class="nc">&nbsp;            String sql = &quot;SELECT SUM(Population) AS WorldPopulation FROM country&quot;;</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;World Population&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;26. World Population Report&lt;/h2&gt;&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;World Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;WorldPopulation&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No data found for world population.&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get world population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report27&quot;)
+&nbsp;    public String getReport27(@RequestParam(value = &quot;continentName&quot;) String continentName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the total population of the specified continent
+<b class="nc">&nbsp;            String sql = &quot;SELECT Continent, SUM(Population) AS TotalPopulation FROM country WHERE Continent = ? GROUP BY Continent&quot;;</b>
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, continentName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population of A Continent Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;27. Population of A Continent Report&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report27?continentName=(Enter your continent name without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Continent Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Continent&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;TotalPopulation&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No continent found with the name: &quot;).append(continentName).append(&quot;&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get continent population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report28&quot;)
+&nbsp;    public String getReport28(@RequestParam(value = &quot;regionName&quot;) String regionName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the total population of the specified region
+<b class="nc">&nbsp;            String sql = &quot;SELECT Region, SUM(Population) AS TotalPopulation FROM country WHERE Region = ? GROUP BY Region&quot;;</b>
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, regionName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population of A Region Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;28. Population of A Region Report&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report28?regionName=(Enter your region name without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Region Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Region&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;TotalPopulation&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No region found with the name: &quot;).append(regionName).append(&quot;&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get region population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report29&quot;)
+&nbsp;    public String getReport29(@RequestParam(value = &quot;countryName&quot;) String countryName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the total population of the specified country
+<b class="nc">&nbsp;            String sql = &quot;SELECT Name, Population FROM country WHERE Name = ?&quot;;</b>
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, countryName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population of A Country Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;29. Population of A Country Report&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report29?countryName=(Enter your country name without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Name&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;Population&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No country found with the name: &quot;).append(countryName).append(&quot;&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report30&quot;)
+&nbsp;    public String getReport30(@RequestParam(value = &quot;districtName&quot;) String districtName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the total population of the specified district
+<b class="nc">&nbsp;            String sql = &quot;SELECT District, SUM(Population) AS TotalPopulation FROM city WHERE District = ? GROUP BY District&quot;;</b>
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, districtName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population of A District Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;30. Population of A District Report&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report30?districtName=(Enter your district name without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;District Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;District&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;TotalPopulation&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No district found with the name: &quot;).append(districtName).append(&quot;&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get district population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report31&quot;)
+&nbsp;    public String getReport31(@RequestParam(value = &quot;cityName&quot;) String cityName) {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get the population of the specified city
+<b class="nc">&nbsp;            String sql = &quot;SELECT Name, Population FROM city WHERE Name = ?&quot;;</b>
+&nbsp;
+&nbsp;            // Use PreparedStatement to prevent SQL injection
+<b class="nc">&nbsp;            PreparedStatement pstmt = con.prepareStatement(sql);</b>
+<b class="nc">&nbsp;            pstmt.setString(1, cityName);</b>
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = pstmt.executeQuery();</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population of A City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;31. Population of A City Report&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Search by: http://localhost:8080/report31?cityName=(Enter your city name without the bracket)&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            if (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Name&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getInt(&quot;Population&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;p&gt;No city found with the name: &quot;).append(cityName).append(&quot;&lt;/p&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city population details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report32&quot;)
+&nbsp;    public String getReport32() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Step 1: Calculate the total world population
+<b class="nc">&nbsp;            String worldPopulationQuery = &quot;SELECT SUM(Population) AS WorldPopulation FROM country&quot;;</b>
+<b class="nc">&nbsp;            ResultSet worldPopResult = stmt.executeQuery(worldPopulationQuery);</b>
+<b class="nc">&nbsp;            long worldPopulation = 0;</b>
+<b class="nc">&nbsp;            if (worldPopResult.next()) {</b>
+<b class="nc">&nbsp;                worldPopulation = worldPopResult.getLong(&quot;WorldPopulation&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Step 2: Calculate the number of speakers for each specified language
+<b class="nc">&nbsp;            String sql = &quot;SELECT cl.Language, SUM(c.Population * cl.Percentage / 100) AS TotalSpeakers &quot; +</b>
+&nbsp;                    &quot;FROM countrylanguage cl &quot; +
+&nbsp;                    &quot;JOIN country c ON cl.CountryCode = c.Code &quot; +
+&nbsp;                    &quot;WHERE cl.Language IN (&#39;Chinese&#39;, &#39;English&#39;, &#39;Hindi&#39;, &#39;Spanish&#39;, &#39;Arabic&#39;) &quot; +
+&nbsp;                    &quot;GROUP BY cl.Language &quot; +
+&nbsp;                    &quot;ORDER BY TotalSpeakers DESC&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Language Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;32. A language report for number of people who speak the following the following&quot; +</b>
+&nbsp;                    &quot; languages&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;from greatest number to smallest, including the percentage of the world&quot; +</b>
+&nbsp;                    &quot; population:&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;Chinese, English, Hindi, Spanish, Arabic.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Language&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Total Speakers&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;% of World Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Step 3: Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String language = rset.getString(&quot;Language&quot;);</b>
+<b class="nc">&nbsp;                long totalSpeakers = rset.getLong(&quot;TotalSpeakers&quot;);</b>
+<b class="nc">&nbsp;                double percentOfWorldPopulation = (worldPopulation &gt; 0) ? ((double) totalSpeakers / worldPopulation) * 100 : 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(language).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(totalSpeakers).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(String.format(&quot;&lt;td&gt;%.2f%%&lt;/td&gt;&quot;, percentOfWorldPopulation));</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get language report details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report33&quot;)
+&nbsp;    public String getReport33() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to join the country and city tables to get capital city name
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Code, country.Name AS CountryName, country.Continent, country.Region, &quot; +</b>
+&nbsp;                    &quot;country.Population, city.Name AS CapitalCityName &quot; +
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;LEFT JOIN city ON country.Capital = city.ID&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Country Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;33. A country report with Country Code, Country Name,&quot; +</b>
+&nbsp;                    &quot;Continent, Region, Population, Capital.&lt;/h2&gt;&quot;);
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Code&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Code&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CountryName&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Continent&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;Region&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;Population&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CapitalCityName&quot;) != null ? rset.getString(&quot;CapitalCityName&quot;) : &quot;N/A&quot;).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get country details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report34&quot;)
+&nbsp;    public String getReport34() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // Create string for SQL statement
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.ID, city.Name AS CityName, city.CountryCode, city.District, city.Population, country.Name AS CountryName &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.CountryCode = country.Code&quot;;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;34. A city report with City Name, Country Name, District, Population.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;District&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CityName&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CountryName&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;District&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getInt(&quot;Population&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report35&quot;)
+&nbsp;    public String getReport35() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to join the country and city tables to get capital city information
+<b class="nc">&nbsp;            String sql = &quot;SELECT city.Name AS CapitalCityName, country.Name AS CountryName, city.Population &quot; +</b>
+&nbsp;                    &quot;FROM city &quot; +
+&nbsp;                    &quot;JOIN country ON city.ID = country.Capital&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Capital City Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;35. A capital city report with City Name, Country Name, Population.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Capital City Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CapitalCityName&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getString(&quot;CountryName&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(rset.getLong(&quot;Population&quot;)).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get capital city details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @RequestMapping(&quot;report36&quot;)
+&nbsp;    public String getReport36() {
+<b class="nc">&nbsp;        StringBuilder htmlTable = new StringBuilder();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;
+&nbsp;            // Create SQL query to get population data for continents, regions, and countries
+<b class="nc">&nbsp;            String sql = &quot;SELECT country.Continent, country.Region, country.Name AS CountryName, &quot; +</b>
+&nbsp;                    &quot;country.Population AS CountryPopulation, &quot; +
+&nbsp;                    &quot;IFNULL(SUM(city.Population), 0) AS CityPopulation &quot; +
+&nbsp;                    &quot;FROM country &quot; +
+&nbsp;                    &quot;LEFT JOIN city ON country.Code = city.CountryCode &quot; +
+&nbsp;                    &quot;GROUP BY country.Code&quot;;
+&nbsp;
+&nbsp;            // Execute SQL statement
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Start building the HTML table
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;!DOCTYPE html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;html&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;head&gt;&lt;title&gt;Population Report&lt;/title&gt;&lt;/head&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;36. A population report with the following:&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;The name of the continent/region/country.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;The total population of the continent/region/country.&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;The total population of the continent/region/country living in cities (including a %).&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;h2&gt;The total population of the continent/region/country not living in cities (including a %).&lt;/h2&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;table border=&#39;1&#39;&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Continent&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Region&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Country Name&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Total Population&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;% in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;Population not in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;th&gt;% not in Cities&lt;/th&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;
+&nbsp;            // Process the result set and create table rows
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String continent = rset.getString(&quot;Continent&quot;);</b>
+<b class="nc">&nbsp;                String region = rset.getString(&quot;Region&quot;);</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;CountryName&quot;);</b>
+<b class="nc">&nbsp;                long totalPopulation = rset.getLong(&quot;CountryPopulation&quot;);</b>
+<b class="nc">&nbsp;                long cityPopulation = rset.getLong(&quot;CityPopulation&quot;);</b>
+<b class="nc">&nbsp;                long nonCityPopulation = totalPopulation - cityPopulation;</b>
+&nbsp;
+<b class="nc">&nbsp;                double percentInCities = (totalPopulation &gt; 0) ? ((double) cityPopulation / totalPopulation) * 100 : 0;</b>
+<b class="nc">&nbsp;                double percentNotInCities = (totalPopulation &gt; 0) ? ((double) nonCityPopulation / totalPopulation) * 100 : 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;tr&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(continent).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(region).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(countryName).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(totalPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(cityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(String.format(&quot;&lt;td&gt;%.2f%%&lt;/td&gt;&quot;, percentInCities));</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;td&gt;&quot;).append(nonCityPopulation).append(&quot;&lt;/td&gt;&quot;);</b>
+<b class="nc">&nbsp;                htmlTable.append(String.format(&quot;&lt;td&gt;%.2f%%&lt;/td&gt;&quot;, percentNotInCities));</b>
+<b class="nc">&nbsp;                htmlTable.append(&quot;&lt;/tr&gt;&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Close the table and HTML tags
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/table&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/body&gt;&quot;);</b>
+<b class="nc">&nbsp;            htmlTable.append(&quot;&lt;/html&gt;&quot;);</b>
+&nbsp;
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return &quot;&lt;html&gt;&lt;body&gt;&lt;h2&gt;Error: Failed to get population report details&lt;/h2&gt;&lt;p&gt;&quot; + e.getMessage() + &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return htmlTable.toString();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @RequestMapping(&quot;city&quot;)
@@ -190,7 +2383,37 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        return cities;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public static void report2() {
+&nbsp;    @RequestMapping(&quot;capitals&quot;)
+&nbsp;    public ArrayList&lt;CapitalCity&gt; getCapitalCities() {
+<b class="nc">&nbsp;        ArrayList&lt;CapitalCity&gt; capitalCities = new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+&nbsp;            // Create an SQL statement
+<b class="nc">&nbsp;            Statement stmt = con.createStatement();</b>
+&nbsp;            // SQL query to get country name, capital city name, and population
+<b class="nc">&nbsp;            String sql = &quot;SELECT c.Name AS countryName, ct.Name AS capitalCityName, c.Population &quot; +</b>
+&nbsp;                    &quot;FROM country c &quot; +
+&nbsp;                    &quot;JOIN city ct ON c.Capital = ct.ID&quot;;
+&nbsp;            // Execute SQL query
+<b class="nc">&nbsp;            ResultSet rset = stmt.executeQuery(sql);</b>
+&nbsp;
+&nbsp;            // Process the result set
+<b class="nc">&nbsp;            while (rset.next()) {</b>
+<b class="nc">&nbsp;                String countryName = rset.getString(&quot;countryName&quot;);</b>
+<b class="nc">&nbsp;                String capitalCityName = rset.getString(&quot;capitalCityName&quot;);</b>
+<b class="nc">&nbsp;                long population = rset.getLong(&quot;Population&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                CapitalCity capitalCity = new CapitalCity(countryName, capitalCityName, population);</b>
+<b class="nc">&nbsp;                capitalCities.add(capitalCity);</b>
+&nbsp;            }
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            System.out.println(e.getMessage());</b>
+<b class="nc">&nbsp;            System.out.println(&quot;Failed to fetch capital cities&quot;);</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return capitalCities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void outputReport00() {
 <b class="nc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
 &nbsp;        try {
 &nbsp;            // Create an SQL statement
@@ -203,10 +2426,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            while (rset.next()) {</b>
 <b class="nc">&nbsp;                String name = rset.getString(&quot;name&quot;);</b>
 <b class="nc">&nbsp;                Integer population = rset.getInt(&quot;population&quot;);</b>
-<b class="nc">&nbsp;                sb.append(name + &quot;\t&quot; + population + &quot;\r\n&quot;);</b>
+&nbsp;                // Print header
+<b class="nc">&nbsp;                sb.append(&quot;|&quot; + &quot;\t&quot; + name + &quot;\t&quot; + &quot;|&quot; + &quot;\t&quot; + population + &quot;\t&quot; + &quot;|&quot; + &quot;\r\n&quot;);</b>
 &nbsp;            }
 <b class="nc">&nbsp;            new File(&quot;./output/&quot;).mkdir();</b>
-<b class="nc">&nbsp;            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(&quot;./output/report1.txt&quot;)));</b>
+<b class="nc">&nbsp;            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(&quot;./output/report00.txt&quot;)));</b>
 <b class="nc">&nbsp;            writer.write(sb.toString());</b>
 &nbsp;            writer.close();
 <b class="nc">&nbsp;            System.out.println(sb.toString());</b>
@@ -226,25 +2450,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    public static void connect(String conString, int delay) {
 &nbsp;        try {
 &nbsp;            // Load Database driver
-<b class="nc">&nbsp;            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</b>
+<b class="fc">&nbsp;            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);</b>
 &nbsp;        } catch (ClassNotFoundException e) {
 <b class="nc">&nbsp;            System.out.println(&quot;Could not load SQL driver&quot;);</b>
 <b class="nc">&nbsp;            System.exit(-1);</b>
 &nbsp;        }
 &nbsp;
-<b class="nc">&nbsp;        int retries = 10;</b>
-<b class="nc">&nbsp;        for (int i = 0; i &lt; retries; ++i) {</b>
-<b class="nc">&nbsp;            System.out.println(&quot;Connecting to database...&quot;);</b>
+<b class="fc">&nbsp;        int retries = 10;</b>
+<b class="pc">&nbsp;        for (int i = 0; i &lt; retries; ++i) {</b>
+<b class="fc">&nbsp;            System.out.println(&quot;Connecting to database...&quot;);</b>
 &nbsp;            try {
 &nbsp;                // Wait a bit for db to start
-<b class="nc">&nbsp;                Thread.sleep(delay);</b>
+<b class="fc">&nbsp;                Thread.sleep(delay);</b>
 &nbsp;                // Connect to database
 &nbsp;                //Added allowPublicKeyRetrieval=true to get Integration Tests
 &nbsp;                // to work. Possibly due to accessing from another class?
-<b class="nc">&nbsp;                con = DriverManager.getConnection(</b>
+<b class="fc">&nbsp;                con = DriverManager.getConnection(</b>
 &nbsp;                        &quot;jdbc:mysql://&quot; + conString + &quot;/world?allowPublicKeyRetrieval=true&amp;useSSL&quot; + &quot;=false&quot;, &quot;root&quot;,
 &nbsp;                        &quot;example&quot;);
-<b class="nc">&nbsp;                System.out.println(&quot;Successfully connected&quot;);</b>
+<b class="fc">&nbsp;                System.out.println(&quot;Successfully connected&quot;);</b>
 &nbsp;                break;
 &nbsp;            } catch (SQLException sqle) {
 <b class="nc">&nbsp;                System.out.println(&quot;Failed to connect to database attempt &quot; + Integer.toString(i));</b>
@@ -269,13 +2493,23 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
-&nbsp;    public void printCityReport(ArrayList&lt;City&gt; cities) {
-<b class="fc">&nbsp;        if (cities == null) {</b>
-<b class="fc">&nbsp;            System.out.println(&quot;No cities found&quot;);</b>
+&nbsp;    public void printCountryReport(ArrayList&lt;Country&gt; countries) {
+<b class="nc">&nbsp;        if (countries == null) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;No countries found&quot;);</b>
 &nbsp;            return;
 &nbsp;        }
-<b class="fc">&nbsp;        for (City city : cities) {</b>
-<b class="fc">&nbsp;            System.out.println(city);</b>
+<b class="nc">&nbsp;        for (Country country : countries) {</b>
+<b class="nc">&nbsp;            System.out.println(country);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void printCityReport(ArrayList&lt;City&gt; cities) {
+<b class="nc">&nbsp;        if (cities == null) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;No cities found&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        for (City city : cities) {</b>
+<b class="nc">&nbsp;            System.out.println(city);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;}
@@ -302,7 +2536,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-12-03 02:39</div>
+    <div style="float:right;">generated on 2024-12-04 02:46</div>
 </div>
 </body>
 </html>
